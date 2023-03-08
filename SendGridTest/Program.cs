@@ -42,7 +42,7 @@ var client = new SmtpClient
 };
 string username = "apikey"; 
 
-string password = "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";
+string password = "api key";
 
 client.Credentials = new NetworkCredential(username, password);
 

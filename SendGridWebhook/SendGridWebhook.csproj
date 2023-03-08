@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>ab248c50-8cb8-4054-8379-c129060ad4ec</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.WebHooks.Receivers" Version="1.2.2" />
+    <PackageReference Include="Microsoft.AspNet.WebHooks.Receivers.Custom" Version="1.2.2" />
+    <PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.36" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.2.0" />
+    <PackageReference Include="SendGrid" Version="9.28.1" />
+    <PackageReference Include="SendGrid.SmtpApi" Version="1.4.6" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+</Project>

@@ -28,6 +28,7 @@ namespace WebhookTest
         {
 
             services.AddControllers();
+    
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebhookTest", Version = "v1" });

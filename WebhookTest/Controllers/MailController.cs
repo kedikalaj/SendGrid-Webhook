@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace WebhookTest.Controllers
@@ -19,16 +20,23 @@ namespace WebhookTest.Controllers
 
 
         [HttpPost]
-        public void Post(string root)
+        public void Post([FromBody] object json)
         {
 
-             // Convert the string to a JSON object
-            dynamic jsonObject = JsonConvert.DeserializeObject(root);
+            var token = JToken.Parse(json.ToString());
+            if (token is JArray)
+            {
+                var list = JsonConvert.DeserializeObject<List<Email>>(json.ToString());
 
-            // Access properties of the JSON object
-            string property1 = jsonObject.email;
+                Console.WriteLine($"There are {list.Count} movies");
+            }
+            else if (token is JObject)
+            {
+                string a = "";
+            }
+            // Convert the string to a JSON object
+          
 
-            
         }
     }
 }

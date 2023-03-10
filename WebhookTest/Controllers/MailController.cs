@@ -27,12 +27,12 @@ namespace WebhookTest.Controllers
             if (token is JArray)
             {
                 var list = JsonConvert.DeserializeObject<List<Email>>(json.ToString());
-
-                Console.WriteLine($"There are {list.Count} movies");
+               
             }
             else if (token is JObject)
             {
-                string a = "";
+                var list = JsonConvert.DeserializeObject<Email>(json.ToString());  
+
             }
             // Convert the string to a JSON object
           

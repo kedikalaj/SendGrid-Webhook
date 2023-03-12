@@ -1,74 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿// using SendGrid's C# Library
+// https://github.com/sendgrid/sendgrid-csharp
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
-
-using SendGrid.SmtpApi;
-using System.Net;
-using System.Net.Mail;
-using System.Text;
-
-static string XsmtpapiHeaderAsJson()
+namespace Example
 {
-    var header = new Header();
-
-    var uniqueArgs = new Dictionary<string, string>
+    internal class Example
+    {
+        private static void Main()
         {
-            {
-                "mailId",
-                "123456"
-            },
-            {
-                "mailType",
-                "marketing"
-            }
-        };
-    header.AddUniqueArgs(uniqueArgs);
+            Execute().Wait();
+        }
 
-    return header.JsonString();
+        static async Task Execute()
+        {
+            var apiKey = Environment.GetEnvironmentVariable("api");
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress("kedi.kalaj@pragmatic.al", "Example User");
+            var subject = "Sending with SendGrid is Fun";
+            var to = new EmailAddress("kedikalaj123@gmail.com", "Example User");
+            var plainTextContent = "and easy to do anywhere with C#.";
+            var htmlContent = "<strong>and easy to do anywhere with C#.</strong>";
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+            var response = await client.SendEmailAsync(msg);
+        }
+    }
 }
-
-
-string xmstpapiJson = XsmtpapiHeaderAsJson();
-
-var client = new SmtpClient
-{
-    Port = 587,
-    Host = "smtp.sendgrid.net",
-    Timeout = 10000,
-    DeliveryMethod = SmtpDeliveryMethod.Network,
-    UseDefaultCredentials = false
-};
-string username = "apikey"; 
-
-string password = "api key";
-
-client.Credentials = new NetworkCredential(username, password);
-
-var mail = new MailMessage
-{
-    From = new MailAddress("kedi.kalaj@pragmatic.al"),
-    Subject = "Hello there, this is a test email.",
-    Body = "Hi, How are you??"
-};
-
-// add the custom header that we built above
-mail.Headers.Add("X-SMTPAPI", xmstpapiJson);
-mail.BodyEncoding = Encoding.UTF8;
-string email = "kedikalaj123@gmail.com";
-
-if (email != null)
-{
-    // Remember that MIME To's are different than SMTPAPI Header To's!
-    mail.To.Add(new MailAddress(email));
-  await  client.SendMailAsync(mail);
-
-    
-
-
-}
-
-mail.Dispose();
-
-

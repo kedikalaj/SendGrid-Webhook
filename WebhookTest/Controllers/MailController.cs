@@ -27,7 +27,15 @@ namespace WebhookTest.Controllers
             if (token is JArray)
             {
                 var list = JsonConvert.DeserializeObject<List<Email>>(json.ToString());
-               
+
+                for (int i = list.Count - 1; i >= 0; i--)
+                {
+                    string e = list[0].Emaill;
+                    string w = list[0].ToString();
+
+
+                }
+
             }
             else if (token is JObject)
             {
@@ -37,6 +45,11 @@ namespace WebhookTest.Controllers
             // Convert the string to a JSON object
           
 
+        }
+        [HttpGet]
+        public string get()
+        {
+            return "test";
         }
     }
 }

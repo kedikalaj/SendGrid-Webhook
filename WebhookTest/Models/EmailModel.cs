@@ -12,6 +12,11 @@ namespace WebhookTest.Models
         [JsonProperty("email")]
         public string Emaill { get; set; }
 
+        [JsonProperty("sg_message_id")]
+        public string ID { get; set; }
+
+        [JsonProperty("event")]
+        public string Event{ get; set; }
 
     }
 }

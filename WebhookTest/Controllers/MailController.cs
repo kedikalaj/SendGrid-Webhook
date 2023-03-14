@@ -55,7 +55,7 @@ namespace WebhookTest.Controllers
                         Emaill = list[i].Emaill.ToString()
                     };
 
-                    string conn = "Server=(localdb)\\local;Database=MailEvents; Trusted_Connection=true";
+                    string conn = "Server=(localdb)\\mssqllocaldb;Database=MailEvents; Trusted_Connection=true";
 
                     var options = new DbContextOptionsBuilder<EmailContext>()
                   .UseSqlServer(new SqlConnection(conn));
@@ -106,8 +106,67 @@ namespace WebhookTest.Controllers
             else if (token is JObject)
             {
                 var list = JsonConvert.DeserializeObject<Email>(json.ToString());
-                _emailContext.Emails.Add(list);
-                await _emailContext.SaveChangesAsync();
+
+
+
+                if (!MessageExists(list.MID))
+                {
+
+
+
+                    Email mail = new Email
+                    {
+
+                        MID = list.MID.ToString(),
+                        Event = list.Event.ToString(),
+                        Emaill = list.Emaill.ToString()
+                    };
+
+                    string conn = "Server=(localdb)\\mssqllocaldb;Database=MailEvents; Trusted_Connection=true";
+
+                    var options = new DbContextOptionsBuilder<EmailContext>()
+                  .UseSqlServer(new SqlConnection(conn));
+
+
+                    using (var mailContext = new EmailContext(_emailContext.Options))
+                    {
+
+
+                        try
+                        {
+                            mailContext.Emails.Add(mail);
+                            await mailContext.SaveChangesAsync();
+                        }
+                        catch (Exception e)
+                        {
+                            return BadRequest();
+                        }
+
+                    }
+                }
+                else
+                {
+
+                    var result = _emailContext.Emails.SingleOrDefault(b => b.MID == list.MID);
+                    if (result != null)
+                    {
+                        try
+                        {
+                            result.Event = list.Event;
+                            await _emailContext.SaveChangesAsync();
+                        }
+                        catch (Exception e)
+                        {
+                            return BadRequest();
+
+                        }
+
+                    }
+
+
+                }
+
+
 
                 return await Task.FromResult(list);
                 

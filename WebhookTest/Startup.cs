@@ -51,7 +51,7 @@ namespace WebhookTest
                 });
             });
             services.AddDbContext<EmailContext>(options =>
-            options.UseSqlServer("Server=(localdb)\\local;Database=MailEvents; Trusted_Connection=true"));
+            options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=MailEvents; Trusted_Connection=true"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

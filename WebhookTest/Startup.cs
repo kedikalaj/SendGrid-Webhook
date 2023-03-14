@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using WebhookTest.Models;
 
 namespace WebhookTest
 {
@@ -34,6 +36,8 @@ namespace WebhookTest
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebhookTest", Version = "v1" });
             });
 
+           // services.AddDbContext<ContactsAPIDbContext>(OptionsBuilderConfigurationExtensions => OptionsBuilderConfigurationExtensions.UseSqlServer("Server=(localdb)\\\\local"));
+
             var provider = services.BuildServiceProvider();
 
             var config = provider.GetRequiredService<IConfiguration>();
@@ -46,7 +50,8 @@ namespace WebhookTest
                     buidler.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
                 });
             });
-
+            services.AddDbContext<EmailContext>(options =>
+            options.UseSqlServer("Server=(localdb)\\local;Database=MailEvents; Trusted_Connection=true"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

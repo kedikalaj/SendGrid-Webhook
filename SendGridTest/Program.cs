@@ -17,7 +17,7 @@ namespace Example
 
         static async Task Execute()
         {
-            var apiKey = Environment.GetEnvironmentVariable("api");
+            var apiKey = Environment.GetEnvironmentVariable("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");
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress("kedi.kalaj@pragmatic.al", "Example User");
             var subject = "Sending with SendGrid is Fun";

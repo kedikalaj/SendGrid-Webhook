@@ -9,6 +9,12 @@ using System.Net.Http;
 using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using System.Xml.Linq;
+using Microsoft.Extensions.Options;
+using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace WebhookTest.Controllers
@@ -19,8 +25,14 @@ namespace WebhookTest.Controllers
     {
 
 
+        private EmailContext _emailContext;
+        public MailController(EmailContext emailContext)
+        {
+            _emailContext = emailContext;
+        }
+
         [HttpPost]
-        public void Post([FromBody] object json)
+        public async Task<ActionResult<Email>> Post([FromBody] object json)
         {
 
             var token = JToken.Parse(json.ToString());
@@ -30,26 +42,86 @@ namespace WebhookTest.Controllers
 
                 for (int i = list.Count - 1; i >= 0; i--)
                 {
-                    string e = list[0].Emaill;
-                    string w = list[0].ToString();
+                    if (!MessageExists(list[i].MID))
+                    {
+
+                   
+
+                    Email mail = new Email
+                    {
+                    
+                        MID = list[i].MID.ToString(),
+                        Event = list[i].Event.ToString(),
+                        Emaill = list[i].Emaill.ToString()
+                    };
+
+                    string conn = "Server=(localdb)\\local;Database=MailEvents; Trusted_Connection=true";
+
+                    var options = new DbContextOptionsBuilder<EmailContext>()
+                  .UseSqlServer(new SqlConnection(conn));
+                  
+
+                    using (var mailContext = new EmailContext( _emailContext.Options ))
+                    {
+
+                   
+                        try
+                        {
+                            mailContext.Emails.Add(mail);
+                            await mailContext.SaveChangesAsync();
+                        }
+                    catch(Exception e)
+                        {
+                                return BadRequest();
+                        }
+                        
+                    }
+                    }
+                    else
+                    {
+
+                        var result = _emailContext.Emails.SingleOrDefault(b => b.MID == list[i].MID);
+                        if (result != null)
+                        {
+                            try
+                            {
+                                result.Event = list[i].Event;
+                                await _emailContext.SaveChangesAsync();
+                            }
+                            catch (Exception e)
+                            {
+                                return BadRequest();
+
+                            }
+
+                        }
+
+
+                    }
 
 
                 }
-
+                return Ok();
             }
             else if (token is JObject)
             {
-                var list = JsonConvert.DeserializeObject<Email>(json.ToString());  
+                var list = JsonConvert.DeserializeObject<Email>(json.ToString());
+                _emailContext.Emails.Add(list);
+                await _emailContext.SaveChangesAsync();
 
+                return await Task.FromResult(list);
+                
             }
+            else return BadRequest();
             // Convert the string to a JSON object
           
 
         }
-        [HttpGet]
-        public string get()
+
+        private bool MessageExists(string id)
         {
-            return "test";
+            return _emailContext.Emails.Any(e => e.MID == id);
         }
+
     }
 }
